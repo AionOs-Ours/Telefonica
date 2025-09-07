@@ -3,7 +3,7 @@ name: Deploy React App to Azure App Service
 on:
   push:
     branches:
-      - main  # or your deployment branch
+      - main
 
 jobs:
   build-and-deploy:
@@ -26,18 +26,6 @@ jobs:
 
     - name: Verify build output
       run: ls -la build
-
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: react-build
-        path: build/
-
-    - name: Download build artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: react-build
-        path: build/
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
