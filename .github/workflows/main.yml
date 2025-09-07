@@ -1,9 +1,9 @@
-name: Deploy React App to Azure
+name: Deploy React App to Azure App Service
 
 on:
   push:
     branches:
-      - main
+      - main  # or your deployment branch
 
 jobs:
   build-and-deploy:
@@ -16,17 +16,32 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18'
+        node-version: '18'  # Match your React app's Node version
 
     - name: Install dependencies
-      run: npm install
+      run: npm ci
 
     - name: Build React app
       run: npm run build
+
+    - name: Verify build output
+      run: ls -la build
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: react-build
+        path: build/
+
+    - name: Download build artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: react-build
+        path: build/
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ./build
+        package: build
